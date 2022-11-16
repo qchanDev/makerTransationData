@@ -37,10 +37,7 @@ export class Watch {
       const chainGroup = groupWatchAddressByChain(ctx.makerConfigs);
       const scanChain = new ScanChainMain(ctx.config.chains);
       for (const id in chainGroup) {
-        if (
-          Number(id) % this.ctx.instanceCount !== this.ctx.instanceId ||
-          Number(id) != 4
-        ) {
+        if (Number(id) % this.ctx.instanceCount !== this.ctx.instanceId) {
           continue;
         }
         ctx.logger.info(
@@ -64,7 +61,6 @@ export class Watch {
         });
       }
       pubSub.subscribe("ACCEPTED_ON_L2:4", async (tx: any) => {
-        console.log(tx, "===tx s");
         try {
           await this.processSubTxList([tx]);
         } catch (error) {
