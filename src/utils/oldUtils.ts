@@ -19,6 +19,8 @@ const MAX_BITS: any = {
   bnbchain: 256,
   arbitrum_nova: 256,
   polygon_zkevm: 256,
+  scroll_l1_test: 256,
+  scroll_l2_test: 256,
 };
 const precisionResolverMap: any = {
   // pay attention:  the type of field "userAmount" in the following methods is not BigNumber
@@ -58,6 +60,8 @@ export const CHAIN_INDEX: any = {
   516: "arbitrum_nova",
   517: "polygon_zkevm",
   599: "orbiter",
+  518: "scroll_l1_test",
+  519: "scroll_l2_test",
 };
 
 export const SIZE_OP = {
