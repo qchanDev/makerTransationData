@@ -12,7 +12,7 @@ import {
 import { Op } from "sequelize";
 import { Context } from "../context";
 import { transactionAttributes } from "../models/transaction";
-import { TransactionID } from "../utils";
+import { TransactionIDV2 } from "../utils";
 import { getAmountFlag, getAmountToSend } from "../utils/oldUtils";
 import { IMarket } from "../types";
 
@@ -268,9 +268,13 @@ export async function bulkCreateTransaction(
       lpId: undefined,
       expectValue: undefined,
     };
+
     const saveExtra: any = {
       ebcId: 0,
     };
+    if (tx.source == "xvm") {
+      Object.assign(saveExtra, txExtra.xvm || {});
+    }
     const isMakerSend =
       ctx.makerConfigs.findIndex((row: { sender: any }) =>
         equals(row.sender, tx.from),
@@ -363,6 +367,13 @@ export async function bulkCreateTransaction(
     ) {
       txData.status = TransactionStatus.COMPLETE;
     }
+
+    switch (Number(txData.chainId)) {
+      case 4:
+      case 44:
+        saveExtra["version"] = Number(tx.extra["version"]);
+        break;
+    }
     txData.extra = saveExtra;
     txsList.push(txData);
   }
@@ -443,12 +454,20 @@ export async function processUserSendMakerTx(
   // user send to Maker
   const fromChainId = Number(trx.chainId);
   const toChainId = Number(trx.memo);
-  const transcationId = TransactionID(
+  let ext = "";
+  if ([8, 88].includes(Number(trx.chainId))) {
+    ext = dayjs(trx.timestamp).unix().toString();
+  } else if ([4, 44].includes(Number(trx.chainId))) {
+    const extra: any = trx.extra;
+    const version = Number(extra && extra["version"]);
+    ext = String(version);
+  }
+  const transcationId = TransactionIDV2(
     String(trx.from),
     trx.chainId,
     trx.nonce,
     trx.symbol,
-    dayjs(trx.timestamp).valueOf(),
+    ext,
   );
   const market = ctx.makerConfigs.find(
     m =>
@@ -473,12 +492,12 @@ export async function processUserSendMakerTx(
       to: trx.replyAccount,
       symbol: trx.symbol,
       memo: trx.nonce,
-      status: 1,
+      status: [0, 1],
       timestamp: {
-        [Op.gte]: dayjs(trx.timestamp).subtract(5, "m").toDate(),
-        // [Op.lte]: dayjs(trx.timestamp)
-        //   .add(60 * 24 * 2, "m")
-        //   .toDate(),
+        [Op.gte]: dayjs(trx.timestamp).subtract(20, "m").toDate(),
+        [Op.lte]: dayjs(trx.timestamp)
+          .add(60 * 24 * 2, "m")
+          .toDate(),
       },
       value: needToAmount,
     };
@@ -486,9 +505,9 @@ export async function processUserSendMakerTx(
     if ([4, 44].includes(fromChainId)) {
       where.timestamp = {
         [Op.gte]: dayjs(trx.timestamp).subtract(120, "m").toDate(),
-        // [Op.lte]: dayjs(trx.timestamp)
-        //   .add(60 * 24 * 2, "m")
-        //   .toDate(),
+        [Op.lte]: dayjs(trx.timestamp)
+          .add(60 * 24 * 2, "m")
+          .toDate(),
       };
     }
     // TODO:122
@@ -541,30 +560,6 @@ export async function processUserSendMakerTx(
           transaction: t,
         },
       );
-      // await ctx.models.transaction.update(
-      //   {
-      //     side: 1,
-      //     status: upStatus,
-      //   },
-      //   {
-      //     where: {
-      //       id: makerSendTx.id,
-      //     },
-      //     transaction: t,
-      //   },
-      // );
-      // await ctx.models.transaction.update(
-      //   {
-      //     side: 0,
-      //     status: upStatus,
-      //   },
-      //   {
-      //     where: {
-      //       id: trx.id,
-      //     },
-      //     transaction: t,
-      //   },
-      // );
     }
     await ctx.models.maker_transaction.upsert(upsertData, {
       transaction: t,
@@ -601,11 +596,12 @@ export async function processMakerSendUserTx(
         "makerId",
         "replyAccount",
         "replySender",
+        "extra",
       ],
       where: {
         memo: trx.chainId,
         nonce: trx.memo,
-        status: 1,
+        status: [0, 1],
         symbol: trx.symbol,
         replyAccount,
         replySender,
@@ -614,7 +610,7 @@ export async function processMakerSendUserTx(
           [Op.gte]: dayjs(trx.timestamp)
             .subtract(24 * 60 * 2, "m")
             .toDate(),
-          [Op.lte]: dayjs(trx.timestamp).add(5, "m").toDate(),
+          [Op.lte]: dayjs(trx.timestamp).add(60, "m").toDate(),
         },
         value: {
           [Op.gt]: Number(trx.value),
@@ -632,12 +628,21 @@ export async function processMakerSendUserTx(
     if (userSendTx?.id) {
       upsertData.inId = userSendTx.id;
       upsertData.fromChain = userSendTx.chainId;
-      upsertData.transcationId = TransactionID(
+      let ext = "";
+      if ([8, 88].includes(Number(userSendTx.chainId))) {
+        ext = dayjs(userSendTx.timestamp).unix().toString();
+      } else if ([4, 44].includes(Number(userSendTx.chainId))) {
+        const version = Number(
+          userSendTx.extra && (<any>userSendTx.extra)["version"],
+        );
+        ext = String(version);
+      }
+      upsertData.transcationId = TransactionIDV2(
         String(userSendTx.from),
         userSendTx.chainId,
         userSendTx.nonce,
         userSendTx.symbol,
-        dayjs(userSendTx.timestamp).valueOf(),
+        ext,
       );
       let upStatus = 99;
       let maxReceiptTime = 1 * 60 * 60 * 24;

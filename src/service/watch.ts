@@ -87,6 +87,12 @@ export class Watch {
         this.ctx.logger.error("readQueneMatch error:", error);
       });
     }
+    // this.readDBMatch(
+    //   dayjs().subtract(5, "d").format("YYYY-MM-DD HH:mm"),
+    //   dayjs().subtract(10, "minute").format("YYYY-MM-DD HH:mm"),
+    // ).catch(error => {
+    //   console.log(error, "==error");
+    // });
   }
   public async readDBMatch(
     startAt: any,
@@ -100,7 +106,6 @@ export class Watch {
       order: [["timestamp", "desc"]],
       where: {
         side: 0,
-        chainId: 4,
         status: 1,
         timestamp: {
           [Op.gt]: startAt,
