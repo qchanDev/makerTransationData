@@ -24,7 +24,7 @@ services:
       - './runtime:/home/makerTransationData/runtime'
       - './pm2.json:/home/makerTransationData/pm2.json'
 
-   rabbitmq:
+  rabbitmq:
      image: rabbitmq
      ports:
        - "5672:5672"
