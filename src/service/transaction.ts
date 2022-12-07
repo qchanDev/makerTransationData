@@ -309,35 +309,12 @@ export async function bulkCreateTransaction(
     txData.extra = saveExtra;
     upsertList.push(<any>txData);
   }
-  // calc response amount
-  // const updateOnDuplicate:string[] = [
-  //   // "hash",
-  //   "from",
-  //   "to",
-  //   "source",
-  //   "value",
-  //   "fee",
-  //   "feeToken",
-  //   "symbol",
-  //   "input",
-  //   "extra",
-  //   "timestamp",
-  //   "tokenAddress",
-  //   "nonce",
-  //   "memo",
-  //   "replyAccount",
-  //   "replySender",
-  //   "side",
-  //   "expectValue",
-  //   "lpId",
-  //   "makerId",
-  // ];
   // MQ
   try {
     const rbmq = new RabbitMq();
     await rbmq.publish(upsertList);
   } catch (e: any) {
-    console.log("RabbitMQ error", e?.message);
+    console.log("RabbitMQ error", e.message);
   }
 
   for (const row of upsertList) {
@@ -362,24 +339,6 @@ export async function bulkCreateTransaction(
       throw error;
     }
   }
-  // const upsertResult = await ctx.models.Transaction.bulkCreate(upsertList, {
-  //   updateOnDuplicate:updateOnDuplicate as any,
-  // });
-  // for (const tx of upsertList) {
-  //   const item = await upsertResult.find(row => equals(row.hash, tx.hash));
-  //   if (equals(item?.hash, tx.hash)) {
-  //     if (!item?.id) {
-  //       ctx.logger.error("空ID1", item?.id)
-  //       ctx.logger.error("空ID2", item?.getDataValue("id"))
-  //       ctx.logger.error("空ID3",  item?.isNewRecord,'===', item?.get("id"))
-  //     }
-  //     tx.id = item?.id;
-  //     if (!item?.id) {
-  //     }
-  //   } else {
-  //     process.exit(1);
-  //   }
-  // }
   return upsertList;
 }
 export async function calcMakerSendAmount(
@@ -577,7 +536,7 @@ export async function quickMatchSuccess(
   ctx: Context,
   inId: number,
   outId: number,
-  transferId: string,
+  _transferId: string,
 ) {
   const outTx = await ctx.models.Transaction.findOne({
     attributes: ["id", "status"],

@@ -23,7 +23,6 @@ services:
     volumes:
       - './runtime:/home/makerTransationData/runtime'
       - './pm2.json:/home/makerTransationData/pm2.json'
-
   rabbitmq:
     restart: always
     image: bitnami/rabbitmq:latest
@@ -37,3 +36,4 @@ services:
       RABBITMQ_PASSWORD: 123456
     volumes:
       - ./rabbit:/bitnami
+
