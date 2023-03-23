@@ -572,11 +572,13 @@ export async function processUserSendMakerTx(
   ctx: Context,
   userTx: Transaction,
 ) {
-  const originTo: string = userTx.to;
+  const originTo: string = originReplyAddress(ctx, userTx.to);
   const makerConfig = ctx.makerConfigs.find(
     item =>
       equals(item.recipient, originTo) ||
-      equals(item.crossAddress?.recipient, originTo),
+      equals(item.crossAddress?.recipient, originTo) ||
+      equals(item.recipient, userTx.to) ||
+      equals(item.crossAddress?.recipient, userTx.to)
   );
   if (isEmpty(makerConfig)) {
     ctx.logger.error(`UserTx %s Not Find Maker Address`, userTx.hash);
@@ -720,7 +722,9 @@ export async function processMakerSendUserTx(
   const makerConfig = ctx.makerConfigs.find(
     item =>
       equals(item.sender, originFrom) ||
-      equals(item.crossAddress?.sender, originFrom),
+      equals(item.crossAddress?.sender, originFrom) ||
+      equals(item.sender, makerTx.from) ||
+      equals(item.crossAddress?.sender, makerTx.from),
   );
   if (isEmpty(makerConfig)) {
     ctx.logger.error(`MakerTx %s Not Find Maker Address`, makerTx.hash);
