@@ -572,7 +572,7 @@ export async function processUserSendMakerTx(
   ctx: Context,
   userTx: Transaction,
 ) {
-  const originTo: string = originReplyAddress(ctx, userTx.to);
+  const originTo: string = userTx.to;
   const makerConfig = ctx.makerConfigs.find(
     item =>
       equals(item.recipient, originTo) ||
