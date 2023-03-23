@@ -159,12 +159,14 @@ export async function bulkCreateTransaction(
     const isMakerSend = !!ctx.makerConfigs.find(
       item =>
         equals(item.sender, originFrom) ||
-        equals(item.crossAddress?.sender, originFrom),
+        equals(item.crossAddress?.sender, originFrom) ||
+        ctx.config.replyAddress.find(item => item.toLowerCase() === originFrom.toLowerCase()),
     );
     const isUserSend = !!ctx.makerConfigs.find(
       item =>
         equals(item.recipient, originTo) ||
-        equals(item.crossAddress?.recipient, originTo),
+        equals(item.crossAddress?.recipient, originTo)
+        || ctx.config.replyAddress.find(item => item.toLowerCase() === originTo.toLowerCase()),
     );
     if (!isMakerSend && !isUserSend && !isOrbiterX) {
       return [] as any[];
@@ -577,8 +579,7 @@ export async function processUserSendMakerTx(
     item =>
       equals(item.recipient, originTo) ||
       equals(item.crossAddress?.recipient, originTo) ||
-      equals(item.recipient, userTx.to) ||
-      equals(item.crossAddress?.recipient, userTx.to)
+      ctx.config.replyAddress.find(item => item.toLowerCase() === originTo.toLowerCase()),
   );
   if (isEmpty(makerConfig)) {
     ctx.logger.error(`UserTx %s Not Find Maker Address`, userTx.hash);
@@ -723,8 +724,7 @@ export async function processMakerSendUserTx(
     item =>
       equals(item.sender, originFrom) ||
       equals(item.crossAddress?.sender, originFrom) ||
-      equals(item.sender, makerTx.from) ||
-      equals(item.crossAddress?.sender, makerTx.from),
+      ctx.config.replyAddress.find(item => item.toLowerCase() === originFrom.toLowerCase()),
   );
   if (isEmpty(makerConfig)) {
     ctx.logger.error(`MakerTx %s Not Find Maker Address`, makerTx.hash);
