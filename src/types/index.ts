@@ -40,7 +40,6 @@ export interface Config {
   chainsTokens: Array<any>;
   subgraphEndpoint: string;
   chains: IChainConfig[];
-  replyAddress: string[];
 }
 
 export interface JsonMap {

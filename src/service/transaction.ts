@@ -25,14 +25,17 @@ import { ethers } from "ethers";
 import sequelize from "sequelize";
 import { isProd } from "../config/config";
 const bootTime = Date.now();
-export async function validateTransactionSpecifications(ctx: Context, tx: ITransaction) {
-  const isOrbiterX = tx.source == "xvm"; // temp 
+export async function validateTransactionSpecifications(
+  ctx: Context,
+  tx: ITransaction,
+) {
+  const isOrbiterX = tx.source == "xvm"; // temp
   const result = {
     orbiterX: false,
     isToMaker: false,
     isToUser: false,
-    intercept: true
-  }
+    intercept: true,
+  };
   if (isOrbiterX) {
     result.orbiterX = true;
   }
@@ -74,10 +77,11 @@ export async function processSubTxList(
         ctx.logger.error(`Id non-existent`, tx);
         continue;
       }
-      const txCache = await ctx.getCache(`subTx_${tx.hash}_${tx.status}`);
+      const txCache = await ctx.getCache(`subTx_${tx.hash}_${tx.status}_1`);
       if (txCache) {
         ctx.logger.info(
-          `match result${tx.side ? "1" : "2"}: already processed ${tx.hash} ${tx.status
+          `match result${tx.side ? "1" : "2"}: already processed ${tx.hash} ${
+            tx.status
           }`,
         );
       } else {
@@ -118,7 +122,8 @@ export async function bulkCreateTransaction(
       ) < 0
     ) {
       ctx.logger.error(
-        ` Token Not Found ${tx.tokenAddress} ${tx.chainId} ${tx.hash
+        ` Token Not Found ${tx.tokenAddress} ${tx.chainId} ${
+          tx.hash
         } ${getFormatDate(tx.timestamp)}`,
       );
       continue;
@@ -190,7 +195,8 @@ export async function bulkCreateTransaction(
     };
     const originFrom: string = originReplyAddress(ctx, tx.from);
     const originTo: string = originReplyAddress(ctx, tx.to);
-    const {isToMaker,isToUser,orbiterX,intercept} = await validateTransactionSpecifications(ctx, tx);
+    const { isToMaker, isToUser, orbiterX, intercept } =
+      await validateTransactionSpecifications(ctx, tx);
     if (intercept) {
       return [];
     }
@@ -576,13 +582,8 @@ export async function processUserSendMakerTx(
   ctx: Context,
   userTx: Transaction,
 ) {
-  const originTo: string = originReplyAddress(ctx, userTx.to);
-  const makerConfig = ctx.makerConfigs.find(
-    item =>
-      equals(item.recipient, originTo) ||
-      equals(item.crossAddress?.recipient, originTo),
-  );
-  if (isEmpty(makerConfig)) {
+  const { intercept } = await validateTransactionSpecifications(ctx, <any>userTx);
+  if (intercept) {
     return {
       errmsg: `UserTx ${userTx.hash} Not Find Maker Address`,
     };
@@ -722,13 +723,8 @@ export async function processMakerSendUserTx(
   ctx: Context,
   makerTx: Transaction,
 ) {
-  const originFrom: string = originReplyAddress(ctx, makerTx.from);
-  const makerConfig = ctx.makerConfigs.find(
-    item =>
-      equals(item.sender, originFrom) ||
-      equals(item.crossAddress?.sender, originFrom),
-  );
-  if (isEmpty(makerConfig)) {
+  const { intercept } = await validateTransactionSpecifications(ctx, <any>makerTx);
+  if (intercept) {
     return {
       errmsg: `MakerTx ${makerTx.hash} Not Find Maker Address`,
     };

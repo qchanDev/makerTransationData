@@ -23,7 +23,6 @@ export class Context {
     chains: [],
     chainsTokens: [],
     subgraphEndpoint: "",
-    replyAddress: ["0x646592183ff25a0c44f09896a384004778f831ed", "0x0043d60e87c5dd08c86c3123340705a1556c4719"],
     // Address should be in lowercase !!!
     crossAddressTransferMap: {
       "0x80c67432656d59144ceff962e8faf8926599bcf8":
@@ -38,7 +37,7 @@ export class Context {
         "0x06d1d401ae235ba01e5d8a6ade82a0f17aba7db4f8780194b4d65315071be10b", // eth
       "0x001709eA381e87D4c9ba5e4A67Adc9868C05e82556A53FD1b3A8b1F21e098143":
         "0x01a316c2a9eece495df038a074781ce3983b4dbda665b951cc52a3025690a448", // dai
-    }
+    },
   };
   public channel: any;
   private async initChainConfigs() {
