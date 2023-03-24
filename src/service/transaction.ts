@@ -48,7 +48,8 @@ export async function validateTransactionSpecifications(
   if (isMakerSend) {
     result.isToUser = true;
   }
-  if (Object.values(ctx.config.crossAddressTransferMap).includes(tx.from)) {
+  if (Object.values(ctx.config.crossAddressTransferMap).find(item => item.toLowerCase() === tx.from.toLowerCase()) ||
+    Object.values(ctx.config.crossAddressTransferMap).find(item => item.toLowerCase() === tx.to.toLowerCase())) {
     result.isToUserCrossAddress = true;
   }
   const isUserSend = !!ctx.makerConfigs.find(
@@ -199,7 +200,7 @@ export async function bulkCreateTransaction(
     const { isToMaker, isToUser, orbiterX, intercept } =
       await validateTransactionSpecifications(ctx, tx);
     if (intercept) {
-      ctx.logger.info(`Tx not belong to maker from:${tx.from} to:${tx.to}`);
+      ctx.logger.error(`Tx not belong to maker from:${tx.from} to:${tx.to}`);
       return [];
     }
     if (isToUser) {

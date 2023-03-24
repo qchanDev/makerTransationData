@@ -21,7 +21,7 @@ dayjs.extend(utc);
 // const hash = "0x7ea5555bb72a353dfaff46111887a62fa117bb7a1208f883ba74913789d53d87";
 const chainId = "514";
 const hash =
-  "0x7417cb4dd658ff766157ad4e69b7f397ddce1f51379a5c86a6fa1883fe1c161a";
+  "0x2a5fb07cc0afb670f7bcf400c7538aae1873df5118adeb3adfe766068762be52";
 
 let chainConfig: IChainCfg;
 let web3: any;
@@ -31,6 +31,7 @@ describe("Transaction test", function () {
     // ...
   });
   it("Submit tx", async function () {
+    this.timeout(30000);
     // Ensure consistent configuration
     const ctx: Context = new Context();
     await ctx.init();
@@ -65,12 +66,15 @@ async function imitateChainCoreTx(hash: string) {
   // const count: number = await web3.eth.getBlockNumber();
   // console.log("blockNumber", count);
   let trx: any = await web3.eth.getTransaction(hash);
+  console.log("------ step1 ------");
   const { nonce, value, gasPrice, input, ...extra } = trx;
   let trxReceipt = await web3.eth.getTransactionReceipt(hash);
+  console.log("------ step2 ------");
   if (!trxReceipt) {
     console.error(`[${chainConfig.name}] Get trxReceipt Not found`);
     return null;
   }
+  console.log("------ step3 ------");
   const { to, from, blockHash, blockNumber, gasUsed, transactionIndex } =
     trxReceipt;
   if (!core.equals(trxReceipt.transactionHash, hash)) {
