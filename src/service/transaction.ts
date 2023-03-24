@@ -35,7 +35,7 @@ export async function validateTransactionSpecifications(
     isToMaker: false,
     isToUser: false,
     intercept: true,
-    isToUserCrossAddress: false
+    isToUserCrossAddress: false,
   };
   if (isOrbiterX) {
     result.orbiterX = true;
@@ -59,7 +59,12 @@ export async function validateTransactionSpecifications(
   if (isUserSend) {
     result.isToMaker = true;
   }
-  if (result.isToMaker || result.isToUser || result.orbiterX || result.isToUserCrossAddress) {
+  if (
+    result.isToMaker ||
+    result.isToUser ||
+    result.orbiterX ||
+    result.isToUserCrossAddress
+  ) {
     result.intercept = false;
   }
   return result;
@@ -194,6 +199,7 @@ export async function bulkCreateTransaction(
     const { isToMaker, isToUser, orbiterX, intercept } =
       await validateTransactionSpecifications(ctx, tx);
     if (intercept) {
+      ctx.logger.warning(`Tx not belong to maker from:${tx.from} to:${tx.to}`);
       return [];
     }
     if (isToUser) {
@@ -644,24 +650,24 @@ export async function processUserSendMakerTx(
       userTx.symbol,
       dayjs(userTx.timestamp).valueOf(),
     );
-     const transferId1 = TranferId(
-        String(userTx.memo),
-        String(userTx.replySender),
-        String(userTx.replyAccount),
-        String(userTx.nonce),
-        String(userTx.symbol),
-        String(userTx.expectValue),
-      );
+    const transferId1 = TranferId(
+      String(userTx.memo),
+      String(userTx.replySender),
+      String(userTx.replyAccount),
+      String(userTx.nonce),
+      String(userTx.symbol),
+      String(userTx.expectValue),
+    );
     const transferId2 = TranferId(
-        String(userTx.memo),
-        String(userTx.to),
-        String(userTx.replyAccount),
-        String(userTx.nonce),
-        String(userTx.symbol),
-        String(userTx.expectValue),
-      );
+      String(userTx.memo),
+      String(userTx.to),
+      String(userTx.replyAccount),
+      String(userTx.nonce),
+      String(userTx.symbol),
+      String(userTx.expectValue),
+    );
     const where = {
-      transferId: [transferId1, userTx.transferId,transferId2],
+      transferId: [transferId1, userTx.transferId, transferId2],
       status: [0, 1, 95],
       side: 1,
       timestamp: {
