@@ -199,7 +199,7 @@ export async function bulkCreateTransaction(
     const { isToMaker, isToUser, orbiterX, intercept } =
       await validateTransactionSpecifications(ctx, tx);
     if (intercept) {
-      ctx.logger.warning(`Tx not belong to maker from:${tx.from} to:${tx.to}`);
+      ctx.logger.info(`Tx not belong to maker from:${tx.from} to:${tx.to}`);
       return [];
     }
     if (isToUser) {
