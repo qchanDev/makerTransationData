@@ -582,7 +582,10 @@ export async function processUserSendMakerTx(
   ctx: Context,
   userTx: Transaction,
 ) {
-  const { intercept } = await validateTransactionSpecifications(ctx, <any>userTx);
+  const { intercept } = await validateTransactionSpecifications(
+    ctx,
+    <any>userTx,
+  );
   if (intercept) {
     return {
       errmsg: `UserTx ${userTx.hash} Not Find Maker Address`,
@@ -723,7 +726,10 @@ export async function processMakerSendUserTx(
   ctx: Context,
   makerTx: Transaction,
 ) {
-  const { intercept } = await validateTransactionSpecifications(ctx, <any>makerTx);
+  const { intercept } = await validateTransactionSpecifications(
+    ctx,
+    <any>makerTx,
+  );
   if (intercept) {
     return {
       errmsg: `MakerTx ${makerTx.hash} Not Find Maker Address`,
