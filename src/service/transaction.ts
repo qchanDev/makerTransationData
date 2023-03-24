@@ -48,8 +48,7 @@ export async function validateTransactionSpecifications(
   if (isMakerSend) {
     result.isToUser = true;
   }
-  if (Object.values(ctx.config.crossAddressTransferMap).find(item => item.toLowerCase() === tx.from.toLowerCase()) ||
-    Object.values(ctx.config.crossAddressTransferMap).find(item => item.toLowerCase() === tx.to.toLowerCase())) {
+  if (Object.values(ctx.config.crossAddressTransferMap).find(item => item.toLowerCase() === tx.from.toLowerCase())) {
     result.isToUserCrossAddress = true;
   }
   const isUserSend = !!ctx.makerConfigs.find(
