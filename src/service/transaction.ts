@@ -200,7 +200,7 @@ export async function bulkCreateTransaction(
       await validateTransactionSpecifications(ctx, tx);
     if (intercept) {
       ctx.logger.error(`Tx not belong to maker from:${tx.from} to:${tx.to}`);
-      return [];
+      continue;
     }
     if (isToUser) {
       txData.side = 1;
