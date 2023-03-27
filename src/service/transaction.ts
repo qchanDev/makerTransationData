@@ -48,7 +48,11 @@ export async function validateTransactionSpecifications(
   if (isMakerSend) {
     result.isToUser = true;
   }
-  if (Object.values(ctx.config.crossAddressTransferMap).includes(tx.from.toLocaleLowerCase())) {
+  if (
+    Object.values(ctx.config.crossAddressTransferMap).includes(
+      tx.from.toLocaleLowerCase(),
+    )
+  ) {
     result.isToUserCrossAddress = true;
   }
   const isUserSend = !!ctx.makerConfigs.find(
@@ -119,7 +123,8 @@ export async function bulkCreateTransaction(
       ) < 0
     ) {
       ctx.logger.error(
-        ` Token Not Found ${tx.tokenAddress} ${tx.chainId} ${tx.hash
+        ` Token Not Found ${tx.tokenAddress} ${tx.chainId} ${
+          tx.hash
         } ${getFormatDate(tx.timestamp)}`,
       );
       continue;
@@ -194,13 +199,12 @@ export async function bulkCreateTransaction(
     if (intercept) {
       continue;
     }
-    console.log(`hash:${txData.hash},isToUser=${isToUser},isToMaker=${isToMaker},orbiterX=${orbiterX},isToUserCrossAddress=${isToUserCrossAddress}`)
+    console.log(
+      `hash:${txData.hash},isToUser=${isToUser},isToMaker=${isToMaker},orbiterX=${orbiterX},isToUserCrossAddress=${isToUserCrossAddress}`,
+    );
     if (!isToUser && !isToMaker && !orbiterX && !isToUserCrossAddress) {
-      ctx.logger.info(
-        `MakerTx ${txData.hash} Not Find Maker Address!`,
-      );
+      ctx.logger.info(`MakerTx ${txData.hash} Not Find Maker Address!`);
       continue;
-
     }
     if (isToUser || isToUserCrossAddress) {
       txData.side = 1;
@@ -299,7 +303,7 @@ export async function bulkCreateTransaction(
     txData.extra = saveExtra;
     upsertList.push(<any>txData);
   }
-  for (const row of   upsertList) {
+  for (const row of upsertList) {
     try {
       const [newTx, created] = await ctx.models.Transaction.findOrCreate({
         defaults: row,
@@ -717,7 +721,7 @@ export async function processUserSendMakerTx(
         },
       );
     }
-    
+
     await ctx.models.MakerTransaction.upsert(<any>upsertData, {
       transaction: t,
     });
@@ -752,7 +756,7 @@ export async function processMakerSendUserTx(
         errmsg: "Missing Id Or Transaction does not exist",
       };
     }
-      const transferId = TranferId(
+    const transferId = TranferId(
       String(makerTx.chainId),
       String(makerTx.replySender),
       String(makerTx.replyAccount),
@@ -780,7 +784,7 @@ export async function processMakerSendUserTx(
         errmsg: `${makerTx.hash} Current status cannot match`,
       };
     }
-  
+
     const models = ctx.models;
     const where: any = {
       transferId: makerTx.transferId,

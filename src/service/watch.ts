@@ -6,10 +6,8 @@ import { Context } from "../context";
 import { processMakerSendUserTx, processUserSendMakerTx } from "./transaction";
 import dayjs from "dayjs";
 import { Op } from "sequelize";
-import { processSubTxList } from "./transaction";
-import BigNumber from "bignumber.js";
 export class Watch {
-  constructor(public readonly ctx: Context) { }
+  constructor(public readonly ctx: Context) {}
   public isMultiAddressPaymentCollection(makerAddress: string): boolean {
     return Object.values(this.ctx.config.crossAddressTransferMap).includes(
       makerAddress.toLowerCase(),
@@ -73,7 +71,6 @@ export class Watch {
       });
       // this.readUserTxReMatch()
     }
-
   }
   // read db
   public async readMakerendReMatch(): Promise<any> {
@@ -126,7 +123,7 @@ export class Watch {
   }
   public async readUserTxReMatch(): Promise<any> {
     const startAt = dayjs().subtract(24, "hour").startOf("d").toDate();
-    const endAt = dayjs().subtract(10, 's').toDate();
+    const endAt = dayjs().subtract(10, "s").toDate();
     const where = {
       side: 0,
       status: 1,
@@ -151,12 +148,14 @@ export class Watch {
       );
       let index = 0;
       for (const tx of txList) {
-        const result = await processUserSendMakerTx(this.ctx, tx).catch(error => {
-          this.ctx.logger.error(
-            `readDBMatch process total:${txList.length}, id:${tx.id},hash:${tx.hash}`,
-            error,
-          );
-        });
+        const result = await processUserSendMakerTx(this.ctx, tx).catch(
+          error => {
+            this.ctx.logger.error(
+              `readDBMatch process total:${txList.length}, id:${tx.id},hash:${tx.hash}`,
+              error,
+            );
+          },
+        );
         console.log(
           `index:${index}/${txList.length},hash:${tx.hash}，result:`,
           result,
