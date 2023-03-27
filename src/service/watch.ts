@@ -17,7 +17,6 @@ export class Watch {
     const ctx = this.ctx;
     try {
       const chainGroup = groupWatchAddressByChain(ctx, ctx.makerConfigs);
-
       const scanChain = new ScanChainMain(ctx.config.chains);
       for (const id in chainGroup) {
         if (process.env["SingleChain"]) {
@@ -70,11 +69,12 @@ export class Watch {
       this.readMakerendReMatch().catch(error => {
         this.ctx.logger.error("readMakerendReMatch error:", error);
       });
+      // this.readUserTxReMatch()
     }
   }
   // read db
   public async readMakerendReMatch(): Promise<any> {
-    const startAt = dayjs().subtract(12, "hour").startOf("d").toDate();
+    const startAt = dayjs().subtract(24, "hour").startOf("d").toDate();
     const endAt = dayjs().subtract(10, "second").toDate();
     const where = {
       side: 1,
@@ -89,8 +89,8 @@ export class Watch {
       const txList = await this.ctx.models.Transaction.findAll({
         raw: true,
         attributes: { exclude: ["input", "blockHash", "transactionIndex"] },
-        order: [["timestamp", "desc"]],
-        limit: 600,
+        order: [["timestamp", "asc"]],
+        limit: 300,
         where,
       });
       console.log(
@@ -122,8 +122,8 @@ export class Watch {
     }
   }
   public async readUserTxReMatch(): Promise<any> {
-    const startAt = dayjs().subtract(6, "hour").startOf("d").toDate();
-    const endAt = dayjs().subtract(10, "second").toDate();
+    const startAt = dayjs().subtract(24, "hour").startOf("d").toDate();
+    const endAt = dayjs().subtract(10, "s").toDate();
     const where = {
       side: 0,
       status: 1,
@@ -138,7 +138,7 @@ export class Watch {
         raw: true,
         attributes: { exclude: ["input", "blockHash", "transactionIndex"] },
         order: [["timestamp", "desc"]],
-        limit: 200,
+        limit: 300,
         where,
       });
       console.log(
