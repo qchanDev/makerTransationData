@@ -21,6 +21,8 @@ router.get(
   "/wallet/makerTransactions/count",
   controllers.getMakerTransactionsCount,
 );
+router.get("/scanBlock", controllers.scanBlock);
+
 // router.get('/getUncollectedPaymentProof', (ctx) => {
 //   // const spvCtx = ctx.state['spvCtx'] as Context;
 //   const query = ctx.request.query;

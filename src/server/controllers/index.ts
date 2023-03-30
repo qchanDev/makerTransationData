@@ -4,7 +4,7 @@ import { Context } from "../../context";
 import Router from "koa-router";
 import dayjs from "dayjs";
 import { Op } from "sequelize";
-
+import { ChainFactory } from "orbiter-chaincore/src/watch/chainFactory";
 export async function getMakerTransactionsCount(ctx: Router.RouterContext) {
   const spvCtx = ctx.state["spvCtx"] as Context;
   const query = ctx.request.query;
@@ -256,6 +256,66 @@ export async function getLps(ctx: Router.RouterContext) {
   ctx.body = {
     errno: 0,
     data: spvCtx.makerConfigs,
+    errmsg: "",
+  };
+}
+
+export async function scanBlock(ctxs: Router.RouterContext) {
+  const { chainId, hash, address, startBlock, endBlock }: any =
+    ctxs.request.query;
+  if (!chainId) {
+    ctxs.body = {
+      errno: 1000,
+      errmsg: "Missing parameter chainId",
+    };
+  } else {
+    if (hash) {
+      const scanTxListByHash = async () => {
+        const ctx: Context = new Context();
+        await ctx.init();
+        const makerList = ctx.makerConfigs.map(item =>
+          item.sender.toLowerCase(),
+        );
+        const watchService = ChainFactory.createWatchChainByIntranetId(
+          String(chainId),
+        );
+        watchService.addWatchAddress(makerList);
+        const tx = await watchService.chain.getTransactionByHash(hash);
+        await ctx.mq.publishTxList([tx]);
+        ctx.logger.info(`api exec ${hash} success`);
+      };
+      scanTxListByHash();
+    } else if (Number(startBlock) && Number(endBlock) && address) {
+      const scanTxList = async () => {
+        const ctx: Context = new Context();
+        await ctx.init();
+        const watchService = ChainFactory.createWatchChainByIntranetId(
+           String(chainId),
+        );
+        const makerList = ctx.makerConfigs.map(item =>
+          item.sender.toLowerCase(),
+        );
+        watchService.addWatchAddress(makerList);
+        const list = await watchService.chain.getTransactions(address, {
+          startblock: startBlock,
+          endblock: endBlock,
+        });
+        await ctx.mq.publishTxList(list);
+        ctx.logger.info(
+          `api exec ${address} ${startBlock}-${endBlock} success`,
+        );
+      };
+      scanTxList();
+    } else {
+      ctxs.body = {
+        errno: 1000,
+        errmsg: "Missing parameter chainId or startBlock,endBlock,address",
+      };
+    }
+  }
+
+  ctxs.body = {
+    errno: 0,
     errmsg: "",
   };
 }
