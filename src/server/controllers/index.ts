@@ -5,6 +5,7 @@ import Router from "koa-router";
 import dayjs from "dayjs";
 import { Op } from "sequelize";
 import { ChainFactory } from "orbiter-chaincore/src/watch/chainFactory";
+import { ITransaction } from "orbiter-chaincore/src/types";
 export async function getMakerTransactionsCount(ctx: Router.RouterContext) {
   const spvCtx = ctx.state["spvCtx"] as Context;
   const query = ctx.request.query;
@@ -290,20 +291,39 @@ export async function scanBlock(ctxs: Router.RouterContext) {
         const ctx: Context = new Context();
         await ctx.init();
         const watchService = ChainFactory.createWatchChainByIntranetId(
-           String(chainId),
+          String(chainId),
         );
         const makerList = ctx.makerConfigs.map(item =>
           item.sender.toLowerCase(),
         );
         watchService.addWatchAddress(makerList);
-        const list = await watchService.chain.getTransactions(address, {
-          startblock: startBlock,
-          endblock: endBlock,
-        });
-        await ctx.mq.publishTxList(list);
-        ctx.logger.info(
-          `api exec ${address} ${startBlock}-${endBlock} success`,
-        );
+        const chainInfo = ctx.config.chains.find(item=>item.internalId == chainId);
+        if(!chainInfo){
+          ctxs.body = {
+            errno: 1000,
+            errmsg: "Missing parameter chainId config",
+          };
+          return
+        }
+        if (chainInfo.watch.includes("rpc")) {
+          await watchService.replayBlock(startBlock, endBlock, async function(start: any, txMap: Map<string, Array<ITransaction>>) {
+            const list: ITransaction[] = [];
+            txMap.forEach(function(txList) {
+              list.push(...txList);
+            });
+            await ctx.mq.publishTxList(list);
+          });
+        } else {
+          const list = await watchService.chain.getTransactions(address, {
+            address,
+            startblock: startBlock,
+            endblock: endBlock,
+          });
+          await ctx.mq.publishTxList(list);
+          ctx.logger.info(
+            `api exec ${address} ${startBlock}-${endBlock} success`,
+          );
+        }
       };
       scanTxList();
     } else {
