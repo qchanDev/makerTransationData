@@ -22,6 +22,7 @@ import { IMarket } from "../types";
 import RLP from "rlp";
 import { ethers } from "ethers";
 import sequelize from "sequelize";
+import { isProd } from "../config/config";
 export async function validateTransactionSpecifications(
   ctx: Context,
   tx: ITransaction,
@@ -391,16 +392,19 @@ export async function bulkCreateTransaction(
       }
     }
     if (row.side == 0) {
-      if (isCreated && row.source === "xvm") {
-        // push
-        if (new Date(row.timestamp).valueOf() > ctx.startTime) {
-          const producer = await ctx.mq.createProducer({
-            exchangeName: "MakerTxList",
-            exchangeType: "direct",
-            queueName: `MakerTxList:${row.chainId}`,
-            routingKey: String(row.chainId),
-          });
-          producer.publish(row, String(row.chainId));
+      if (!isProd() || row.source === "xvm") {
+        if (isCreated) {
+          // push
+          if (new Date(row.timestamp).valueOf() > ctx.startTime) {
+            const producer = await ctx.mq.createProducer({
+              exchangeName: "MakerTxList",
+              exchangeType: "direct",
+              queueName: `MakerTxList:${row.chainId}`,
+              routingKey: String(row.chainId),
+            });
+            const pushTime = new Date().valueOf();
+            producer.publish({ ...row.dataValues, pushTime }, String(row.chainId));
+          }
         }
       }
       redisT.hset(
