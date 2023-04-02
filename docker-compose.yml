@@ -3,6 +3,7 @@ services:
   redis:
     image: redis:latest
     restart: always
+    command: /usr/local/bin/redis-cli config set notify-keyspace-events Ex
     volumes:
       - ./runtime/redis:/data:rw
   data-server:
