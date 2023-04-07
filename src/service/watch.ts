@@ -36,6 +36,12 @@ export class Watch {
     });
     consumer.consume(async message => {
       try {
+        console.log(
+          "consume message",
+          <any[]>JSON.parse(message).map((item: any) => {
+            return item.hash;
+          }),
+        );
         await processSubTxList(ctx, JSON.parse(message));
         return true;
       } catch (error) {
@@ -46,7 +52,12 @@ export class Watch {
 
     try {
       const chainGroup = groupWatchAddressByChain(ctx, ctx.makerConfigs);
-      const scanChain = new ScanChainMain(ctx.config.chains);
+      // const scanChain = new ScanChainMain(
+      //   await injectionServices(ctx.config.chains),
+      // );
+      const scanChain = new ScanChainMain(
+        ctx.config.chains,
+      );
       for (const id in chainGroup) {
         if (process.env["SingleChain"]) {
           const isScan = process.env["SingleChain"]

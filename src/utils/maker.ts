@@ -9,6 +9,10 @@ import chainTest from "../config/chainTest.json";
 import makerTest from "../config/makerTest.json";
 import { isProd } from "../config/config";
 import { Context } from "../context";
+// import { getLoggerService } from "./chaincore/logger";
+// import { getCacheService } from "./chaincore/cache";
+// import emitter from "./chaincore/emitter";
+// import { IChainConfig } from "orbiter-chaincore/src/types";
 
 export const chain: IChainCfg[] = <any[]>(isProd() ? chainMain : chainTest);
 export const maker: IMakerCfg = <any>(isProd() ? makerMain : makerTest);
@@ -135,6 +139,16 @@ export function groupWatchAddressByChain(
   }
   return chain;
 }
+
+// export async function injectionServices(configs: IChainConfig[]) {
+//   const configsClone = JSON.parse(JSON.stringify(configs));
+//   for (const config of configsClone) {
+//     config.logger = await getLoggerService(config.internalId, config.name);
+//     config.cache = await getCacheService(config.internalId);
+//     config.emitter = emitter;
+//   }
+//   return configsClone;
+// }
 
 export function convertMakerConfig(): IMarket[] {
   const makerMap: IMakerCfg = <any>maker;

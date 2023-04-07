@@ -1,18 +1,18 @@
 import "dotenv/config";
 import { Watch } from "./src/service/watch";
-import { Context } from "./src/context";
+import { ctx } from "./src/context";
 import utc from "dayjs/plugin/utc";
 import dayjs from "dayjs";
 import { createServer } from "./src/server";
 dayjs.extend(utc);
 export class Application {
-  public ctx: Context = new Context();
+  // public ctx: Context = new Context();
   async bootstrap() {
-    await this.ctx.init();
-    await this.ctx.mq.connect();
+    await ctx.init();
+    // await this.ctx.mq.connect();
     createServer();
     // process
-    const watch = new Watch(this.ctx);
+    const watch = new Watch(ctx);
     await watch.start();
   }
 }

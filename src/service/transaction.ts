@@ -103,7 +103,8 @@ export async function bulkCreateTransaction(
       ) < 0
     ) {
       ctx.logger.error(
-        ` Token Not Found ${row.tokenAddress} ${row.chainId} ${row.hash
+        ` Token Not Found ${row.tokenAddress} ${row.chainId} ${
+          row.hash
         } ${getFormatDate(row.timestamp)}`,
       );
       continue;
@@ -306,9 +307,17 @@ export async function bulkCreateTransaction(
       if (tx.status === 99) {
         // save
         if (tx.side === 0) {
-          await ctx.redis.multi().hset("TXHASH_STATUS", String(txData.hash), 99).hdel(`UserPendingTx:${txData.memo}`, String(txData.transferId)).exec()
+          await ctx.redis
+            .multi()
+            .hset("TXHASH_STATUS", String(txData.hash), 99)
+            .hdel(`UserPendingTx:${txData.memo}`, String(txData.transferId))
+            .exec();
         } else {
-          await ctx.redis.multi().hset("TXHASH_STATUS", String(txData.hash), 99).zrem(`MakerPendingTx:${txData.chainId}`,String(txData.hash)).exec()
+          await ctx.redis
+            .multi()
+            .hset("TXHASH_STATUS", String(txData.hash), 99)
+            .zrem(`MakerPendingTx:${txData.chainId}`, String(txData.hash))
+            .exec();
         }
 
         ctx.logger.info(
@@ -403,7 +412,10 @@ export async function bulkCreateTransaction(
               routingKey: String(row.chainId),
             });
             const pushTime = new Date().valueOf();
-            producer.publish({ ...row.dataValues, pushTime }, String(row.chainId));
+            producer.publish(
+              { ...row.dataValues, pushTime },
+              String(row.chainId),
+            );
           }
         }
       }
@@ -1143,17 +1155,20 @@ export async function processMakerSendUserTxFromCacheByChain(
                     inId,
                     outId: null,
                   },
-                  transaction: t
+                  transaction: t,
                 },
               );
-              await ctx.models.Transaction.update({
-                status: 99
-              }, {
-                where: {
-                  id: [inId, outId],
+              await ctx.models.Transaction.update(
+                {
+                  status: 99,
                 },
-                transaction: t
-              })
+                {
+                  where: {
+                    id: [inId, outId],
+                  },
+                  transaction: t,
+                },
+              );
               await t.commit();
             } catch (error) {
               await t.rollback();

@@ -129,3 +129,5 @@ export class Context {
 export async function fetchFileMakerList(ctx: Context) {
   ctx.makerConfigs = convertMakerConfig();
 }
+
+export const ctx: Context = new Context();
