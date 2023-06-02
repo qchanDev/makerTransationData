@@ -7,7 +7,6 @@ import { convertChainConfig, convertMakerConfig } from "./utils";
 import { chains } from "orbiter-chaincore";
 import db from "./db";
 import { WinstonX } from "orbiter-chaincore/src/packages/winstonX";
-import { RabbitMQ } from "./utils/rabbitMQ";
 import { equals } from "orbiter-chaincore/src/utils/core";
 import { cloneDeep } from "lodash";
 export class Context {
@@ -16,7 +15,6 @@ export class Context {
   public redis!: Redis;
   public instanceId: number;
   public instanceCount: number;
-  public mq!: RabbitMQ;
   public startTime: number = Date.now();
   public makerConfigs: Array<IMarket> = [];
   public NODE_ENV: "development" | "production" | "test" = <any>(
@@ -112,13 +110,6 @@ export class Context {
     await this.initChainConfigs();
     // Update LP regularly
     await fetchFileMakerList(this);
-    // const chainList = chains.getAllChains();
-    // const chainsIds = chainList
-    //   .filter(
-    //     row => Number(row.internalId) % this.instanceCount === this.instanceId,
-    //   )
-    //   .map(row => row.internalId);
-    this.mq = new RabbitMQ({ url: String(process.env["RABBIT_MQ"]) }, this);
   }
   constructor() {
     this.isSpv = process.env["IS_SPV"] === "1";

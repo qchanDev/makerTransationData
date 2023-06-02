@@ -2,7 +2,8 @@
   {
       "api": {
           "url": "https://api.etherscan.io/api",
-          "key": ""
+          "key": "",
+          "limit": 1000
       },
       "chainId": "1",
       "networkId": "1",
@@ -20,9 +21,7 @@
           "https://eth.rpc.blxrbdn.com"
       ],
       "watch": [
-          "rpc",
-          "api",
-          "alchemy-api"
+          "api"
       ],
       "contracts": [
           "0xd9d74a29307cc6fc8bf424ee4217f1a587fbc8dc"
@@ -56,7 +55,8 @@
   {
       "api": {
           "url": "http://api.arbiscan.io/api",
-          "key": ""
+          "key": "",
+          "limit": 1000
       },
       "chainId": "42161",
       "networkId": "42161",
@@ -74,9 +74,7 @@
           "https://arbitrum.blockpi.network/v1/rpc/public"
       ],
       "watch": [
-          "rpc",
-          "api",
-          "alchemy-api"
+          "api"
       ],
       "alchemyApi": {
           "category": [
@@ -115,7 +113,8 @@
   {
       "api": {
           "url": "https://api.zksync.io/api/v0.2",
-          "key": ""
+          "key": "",
+          "limit": 1000
       },
       "chainId": "zksync",
       "networkId": "zksync",
@@ -162,7 +161,8 @@
   {
       "api": {
           "url": "https://alpha-mainnet.starknet.io",
-          "key": ""
+          "key": "",
+          "limit": 1000
       },
       "chainId": "SN_MAIN",
       "networkId": "mainnet-alpha",
@@ -196,7 +196,8 @@
   {
       "api": {
           "url": "https://api.polygonscan.com/api",
-          "key": ""
+          "key": "",
+          "limit": 1000
       },
       "chainId": "137",
       "networkId": "137",
@@ -216,9 +217,7 @@
           "address": "0x0000000000000000000000000000000000000000"
       },
       "watch": [
-          "rpc",
-          "api",
-          "alchemy-api"
+          "api"
       ],
       "alchemyApi": {
           "category": [
@@ -263,7 +262,8 @@
   {
       "api": {
           "url": "https://api-optimistic.etherscan.io/api",
-          "key": ""
+          "key": "",
+        "limit": 1000
       },
       "chainId": "10",
       "networkId": "10",
@@ -281,9 +281,7 @@
           "https://optimism-mainnet.public.blastapi.io"
       ],
       "watch": [
-          "rpc",
-          "api",
-          "alchemy-api"
+          "api"
       ],
       "alchemyApi": {
           "category": [
@@ -323,7 +321,8 @@
   {
       "api": {
           "url": "https://api.x.immutable.com/v1",
-          "key": ""
+          "key": "",
+        "limit": 1000
       },
       "chainId": "immutableX",
       "networkId": "immutableX",
@@ -353,7 +352,8 @@
   {
       "api": {
           "url": "https://api3.loopring.io/api/v3",
-          "key": ""
+          "key": "",
+        "limit": 1000
       },
       "chainId": "loopring",
       "networkId": "1",
@@ -378,136 +378,6 @@
   },
   {
       "api": {
-          "url": "https://andromeda-explorer.metis.io/api",
-          "key": ""
-      },
-      "chain": "ETH",
-      "chainId": "1088",
-      "networkId": "1088",
-      "internalId": "10",
-      "name": "Metis",
-      "nativeCurrency": {
-          "name": "Metis Token",
-          "symbol": "METIS",
-          "decimals": 18,
-          "address": "0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000"
-      },
-      "rpc": [
-          "https://andromeda.metis.io/?owner=1088"
-      ],
-      "watch": [
-          "api",
-          "rpc"
-      ],
-      "contracts": [],
-      "tokens": [
-          {
-              "name": "Ether (WETH)",
-              "symbol": "ETH",
-              "decimals": 18,
-              "address": "0x420000000000000000000000000000000000000a"
-          },
-          {
-              "name": "USDC Token",
-              "symbol": "USDC",
-              "decimals": 6,
-              "address": "0xEA32A96608495e54156Ae48931A7c20f0dcc1a21"
-          }
-      ],
-      "infoURL": "https://andromeda-explorer.metis.io"
-  },
-  {
-      "api": {
-          "url": "https://api.dydx.exchange",
-          "key": ""
-      },
-      "chainId": "dydx",
-      "networkId": "dydx",
-      "internalId": "11",
-      "name": "Dydx",
-      "nativeCurrency": {
-          "name": "Ether",
-          "symbol": "ETH",
-          "decimals": 0,
-          "address": "0x0000000000000000000000000000000000000000"
-      },
-      "rpc": [],
-      "watch": [
-          "api"
-      ],
-      "contracts": [],
-      "tokens": [
-          {
-              "name": "USD Coin",
-              "symbol": "USDC",
-              "decimals": 6,
-              "address": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
-          }
-      ],
-      "infoURL": ""
-  },
-  {
-      "api": {
-          "url": "https://api.zks.app/v3/1",
-          "key": ""
-      },
-      "chainId": "ZKSpace",
-      "networkId": "13",
-      "internalId": "12",
-      "name": "ZKSpace",
-      "nativeCurrency": {
-          "id": 0,
-          "name": "Ether",
-          "symbol": "ETH",
-          "decimals": 18,
-          "address": "0x0000000000000000000000000000000000000000"
-      },
-      "rpc": [],
-      "watch": [
-          "api"
-      ],
-      "contracts": [],
-      "tokens": [
-          {
-              "id": 4,
-              "name": "USD Coin",
-              "symbol": "USDC",
-              "decimals": 6,
-              "address": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
-          }
-      ],
-      "infoURL": "https://zkspace.info"
-  },
-  {
-      "api": {
-          "url": "https://api.bobascan.com/api",
-          "key": ""
-      },
-      "chainId": "288",
-      "networkId": "288",
-      "internalId": "13",
-      "name": "Boba",
-      "nativeCurrency": {
-          "name": "Ether",
-          "symbol": "ETH",
-          "decimals": 18,
-          "address": "0x0000000000000000000000000000000000000000"
-      },
-      "rpc": [
-          "https://mainnet.boba.network",
-          "https://lightning-replica.boba.network",
-          "https://boba-mainnet.gateway.pokt.network/v1/lb/623ad21b20354900396fed7f"
-      ],
-      "watch": [
-          "rpc",
-          "api"
-      ],
-      "contracts": [],
-      "tokens": [],
-      "infoURL": "https://bobascan.com"
-  },
-  {
-      "api": {
           "url": "https://zksync2-mainnet.zkscan.io/api",
           "key": "",
           "limit":1000
@@ -526,7 +396,6 @@
           "https://zksync2-mainnet.zksync.io"
       ],
       "watch": [
-          "rpc",
           "api"
       ],
       "contracts": [],
@@ -536,7 +405,8 @@
   {
       "api": {
           "url": "https://api.bscscan.com/api",
-          "key": ""
+          "key": "",
+          "limit": 1000
       },
       "chainId": "56",
       "networkId": "56",
@@ -555,8 +425,7 @@
           "https://bscrpc.com"
       ],
       "watch": [
-          "api",
-          "rpc"
+          "api"
       ],
       "tokens": [
           {
@@ -571,7 +440,8 @@
   {
       "api": {
           "url": "https://api-nova.arbiscan.io/api",
-          "key": ""
+          "key": "",
+          "limit": 1000
       },
       "chainId": "42170",
       "networkId": "42170",
@@ -591,8 +461,7 @@
           "https://nova.arbitrum.io/rpc"
       ],
       "watch": [
-          "api",
-          "rpc"
+          "api"
       ],
       "tokens": [
           {
@@ -607,7 +476,8 @@
   {
       "api": {
           "url": "https://api-zkevm.polygonscan.com/api",
-          "key": ""
+          "key": "",
+        "limit": 1000
       },
       "chainId": "1101",
       "networkId": "1101",
@@ -623,7 +493,7 @@
       },
       "rpc": ["https://zkevm-rpc.com"],
       "xvmList": [],
-      "watch": ["rpc", "api"],
+      "watch": ["api"],
       "tokens": [],
       "infoURL": "https://zkevm.polygonscan.com/"
   }

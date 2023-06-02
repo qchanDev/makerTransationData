@@ -228,7 +228,6 @@ async function main() {
   // console.log(`delete data count ${deleteCount}`);
 
   const handleTx = async (tx) => {
-    // await ctx.mq.producer.publish([tx], "");
     return await bulkCreateTransaction(ctx, [tx]);
   };
 
