@@ -57,19 +57,7 @@ export class Context {
   private initLogger() {
     this.logger = WinstonX.getLogger(this.instanceId.toString(), {
       logDir: process.env.logDir,
-      debug: true,
-      logstash: {
-        port: parseInt(process.env.logstashPort),// env or config.json
-        node_name: 'maker-client',
-        host: process.env.logstashHost,
-        // filter: (level, meta) => { 
-        //   if (level === 'error' || meta.flag) {
-        //     return true; // 
-        //   }
-        //   return false; //true: send message to logstash.false: no send
-        // },
-        // meta: {}
-      },
+      debug: true
     });
   }
   private initRedis() {
