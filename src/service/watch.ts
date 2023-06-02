@@ -73,7 +73,6 @@ export class Watch {
             ctx.logger.info(`handle hash ${chainId} ${hash}`);
             await bulkCreateTransaction(ctx, [tx]);
           }
-          await bulkCreateTransaction(ctx, txList);
           return true;
         });
         scanChain.startScanChain(id, chainGroup[id]).catch(error => {
