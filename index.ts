@@ -8,10 +8,13 @@ dayjs.extend(utc);
 export class Application {
   public ctx: Context = new Context();
   async bootstrap() {
-    await this.ctx.init();
     if (process.env.NODE_ENV === "development") {
-      if(Number(process.env.INSTANCES) === 0) asycDataBase(this.ctx);
+      if(Number(process.env.INSTANCES) === 0) {
+        await this.ctx.init();
+        asycDataBase(this.ctx);
+      }
     } else {
+      await this.ctx.init();
       // process
       const watch = new Watch(this.ctx);
       await watch.start();
