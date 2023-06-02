@@ -77,8 +77,6 @@ export class Context {
     this.redis = new Redis({
       port: Number(REDIS_PORT || 6379), // Redis port
       host: REDIS_HOST || "127.0.0.1", // Redis host
-      password: REDIS_PASS,
-      db: Number(REDIS_DB || 0), // Defaults to 0
     });
   }
   async setCache(key: string, value: any, time?: number): Promise<void> {
