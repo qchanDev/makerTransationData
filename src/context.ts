@@ -73,9 +73,9 @@ export class Context {
     });
   }
   private initRedis() {
-    const { REDIS_PORT, REDIS_HOST, REDIS_DB, REDIS_PASS } = <any>process.env;
+    const { REDIS_HOST } = <any>process.env;
     this.redis = new Redis({
-      port: Number(REDIS_PORT || 6379), // Redis port
+      port: 6379, // Redis port
       host: REDIS_HOST || "127.0.0.1", // Redis host
     });
   }
