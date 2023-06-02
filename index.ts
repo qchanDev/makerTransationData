@@ -10,7 +10,7 @@ export class Application {
   async bootstrap() {
     await this.ctx.init();
     if (process.env.NODE_ENV === "async") {
-      asycDataBase(this.ctx);
+      if(Number(process.env.INSTANCES) === 0) asycDataBase(this.ctx);
     } else {
       // process
       const watch = new Watch(this.ctx);

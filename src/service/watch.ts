@@ -1,8 +1,7 @@
-import { sleep } from "orbiter-chaincore/src/utils/core";
 import { pubSub, ScanChainMain } from "orbiter-chaincore";
 import { chains } from "orbiter-chaincore";
 import { Transaction } from "orbiter-chaincore/src/types";
-import { groupWatchAddressByChain, TranferId } from "../utils";
+import { groupWatchAddressByChain } from "../utils";
 import { Context } from "../context";
 
 import {
