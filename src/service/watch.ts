@@ -8,6 +8,7 @@ import {
   bulkCreateTransaction,
 } from "./transaction";
 import dayjs from "dayjs";
+import { prodDb } from "./match";
 export class Watch {
   constructor(public readonly ctx: Context) { }
   public async saveTxRawToCache(txList: Transaction[]) {
@@ -61,6 +62,17 @@ export class Watch {
           `Start Subscribe ChainId: ${id}, instanceId:${this.ctx.instanceId}, instances:${this.ctx.instanceCount}`,
         );
         pubSub.subscribe(`${id}:txlist`, async (txList: Transaction[]) => {
+          for (const tx of txList) {
+            const hash = tx.hash;
+            const chainId = tx.chainId;
+            const count = (await prodDb.query(`select count(1) from transaction where hash="${hash}"`))[0][0]["count(1)"];
+            if (count) {
+              console.log(`${chainId} ${hash} is success in mainnet DB ${count}`);
+              continue;
+            }
+            ctx.logger.info(`handle hash ${chainId} ${hash}`);
+            await bulkCreateTransaction(ctx, [tx]);
+          }
           await bulkCreateTransaction(ctx, txList);
           return true;
         });

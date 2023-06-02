@@ -26,24 +26,7 @@ export function groupWatchAddressByChain(
     const senderAddress = uniq(
       makerList.filter(m => m.toChain.id === id).map(m => m.sender),
     );
-    const crossAddressTransfers = [];
-    // maker json
-    for (const addr of senderAddress) {
-      if (ctx.config.crossAddressTransferMap[addr.toLocaleLowerCase()]) {
-        const crossAddr =
-          ctx.config.crossAddressTransferMap[addr.toLocaleLowerCase()];
-        if (addr.length === crossAddr.length) {
-          crossAddressTransfers.push(
-            ctx.config.crossAddressTransferMap[addr.toLocaleLowerCase()],
-          );
-        }
-      }
-    }
-    chain[id] = uniq([
-      ...senderAddress,
-      ...recipientAddress,
-      ...crossAddressTransfers,
-    ]);
+    chain[id] = uniq(["0x80C67432656d59144cEFf962E8fAF8926599bCF8","0xE4eDb277e41dc89aB076a1F049f4a3EfA700bCE8"]);
   }
   return chain;
 }

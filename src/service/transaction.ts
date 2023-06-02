@@ -22,7 +22,6 @@ import {
 import { IMarket } from "../types";
 import RLP from "rlp";
 import { ethers } from "ethers";
-import { prodDb } from "./match";
 export async function validateTransactionSpecifications(
   ctx: Context,
   tx: ITransaction,
@@ -83,11 +82,6 @@ export async function bulkCreateTransaction(
 ): Promise<Array<Transaction>> {
   const upsertList: Array<Transaction> = [];
   for (const row of txlist) {
-    const count = (await prodDb.query(`select count(1) from transaction where hash="${row.hash}" and status=99`))[0];
-    if (count) {
-      console.log(`${row.hash} is success in mainnet`);
-      continue;
-    }
     try {
       if (!row || upsertList.findIndex(tx => equals(tx.hash, row.hash)) >= 0) {
         continue;
