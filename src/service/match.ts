@@ -4,7 +4,7 @@ import { getFormatDate } from "../utils/oldUtils";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 dayjs.extend(utc);
-const prodDb: Sequelize = new Sequelize({
+export const prodDb: Sequelize = new Sequelize({
   dialect: "mysql",
   database: process.env.PROD_MYSQL_DB_NAME || "orbiter",
   username: process.env.PROD_MYSQL_DB_USERNAME || "root",

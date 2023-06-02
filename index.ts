@@ -3,22 +3,22 @@ import { Watch } from "./src/service/watch";
 import { Context } from "./src/context";
 import utc from "dayjs/plugin/utc";
 import dayjs from "dayjs";
-import { asycDataBase } from "./src/service/match";
 dayjs.extend(utc);
 export class Application {
   public ctx: Context = new Context();
   async bootstrap() {
-    if (process.env.NODE_ENV === "development") {
-      if(Number(process.env.NODE_APP_INSTANCE) === 0) {
-        await this.ctx.init();
-        asycDataBase(this.ctx);
-      }
-    } else {
-      await this.ctx.init();
-      // process
-      const watch = new Watch(this.ctx);
-      await watch.start();
-    }
+    await this.ctx.init();
+    // process
+    const watch = new Watch(this.ctx);
+    await watch.start();
+    // if (process.env.NODE_ENV === "development") {
+    //   if(Number(process.env.NODE_APP_INSTANCE) === 0) {
+    //     await this.ctx.init();
+    //     asycDataBase(this.ctx);
+    //   }
+    // } else {
+    //
+    // }
   }
 }
 const app = new Application();
