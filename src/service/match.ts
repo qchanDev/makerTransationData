@@ -2,6 +2,9 @@ import { Op, Sequelize } from "sequelize";
 import { initModels } from "../models";
 import { Context } from "../context";
 import { getFormatDate } from "../utils/oldUtils";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+dayjs.extend(utc);
 const prodDb: Sequelize = new Sequelize({
   dialect: "mysql",
   database: process.env.PROD_MYSQL_DB_NAME || "orbiter",
@@ -39,6 +42,8 @@ export async function asycDataBase(ctx: Context) {
   }
   const startTime = 1678838400000;
   const endTime = new Date().valueOf();
+  const startAt = dayjs(startTime).toDate();
+  let endAt = dayjs(endTime).toDate();
   console.log(`${getFormatDate(startTime)} - ${getFormatDate(endTime)} Main network database synchronization begin`);
   const transactionList = await prodModels.Transaction.findAll({
     raw: true,
@@ -46,8 +51,8 @@ export async function asycDataBase(ctx: Context) {
     where: {
       status: 99,
       timestamp: {
-        [Op.gte]: startTime,
-        [Op.lte]: endTime,
+        [Op.gte]: startAt,
+        [Op.lte]: endAt,
       },
     },
   });
