@@ -26,10 +26,16 @@ export function groupWatchAddressByChain(
     const senderAddress = uniq(
       makerList.filter(m => m.toChain.id === id).map(m => m.sender),
     );
-    chain[id] = uniq([
-      "0x80C67432656d59144cEFf962E8fAF8926599bCF8",
-      "0xE4eDb277e41dc89aB076a1F049f4a3EfA700bCE8",
-      "0x646592183ff25a0c44f09896a384004778f831ed"]);
+    if (Number(id) === 4) {
+      chain[id] = uniq([
+        "0x064A24243F2Aabae8D2148FA878276e6E6E452E3941b417f3c33b1649EA83e11",
+        "0x07b393627bd514d2aa4c83e9f0c468939df15ea3c29980cd8e7be3ec847795f0"]);
+    } else {
+      chain[id] = uniq([
+        "0x80C67432656d59144cEFf962E8fAF8926599bCF8",
+        "0xE4eDb277e41dc89aB076a1F049f4a3EfA700bCE8",
+        "0x646592183ff25a0c44f09896a384004778f831ed"]);
+    }
   }
   return chain;
 }
