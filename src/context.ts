@@ -112,7 +112,8 @@ export async function fetchFileMakerList(ctx: Context) {
     if (process.env["ServerName"] === "all") {
       const mk1 = convertMakerConfig(require(`./config/maker-80c.json`));
       const mk2 = convertMakerConfig(require(`./config/maker-e4e.json`));
-      ctx.makerConfigs = [...mk1, ...mk2];
+      const mk3 = convertMakerConfig(require(`./config/maker-1ed.json`));
+      ctx.makerConfigs = [...mk1, ...mk2, ...mk3];
     } else {
       ctx.makerConfigs = convertMakerConfig(
         require(`./config/maker-${process.env[
