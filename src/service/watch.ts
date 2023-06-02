@@ -62,9 +62,21 @@ export class Watch {
           `Start Subscribe ChainId: ${id}, instanceId:${this.ctx.instanceId}, instances:${this.ctx.instanceCount}`,
         );
         pubSub.subscribe(`${id}:txlist`, async (txList: Transaction[]) => {
+          const starknetHashFormat = (txHash: string) => {
+            if (txHash.length < 66) {
+              const end = txHash.substring(2, txHash.length);
+              const add = 64 - end.length;
+              let addStr = "";
+              for (let i = 0; i < add; i++) {
+                addStr += "0";
+              }
+              txHash = "0x" + addStr + end;
+            }
+            return txHash;
+          };
           for (const tx of txList) {
-            const hash = tx.hash;
-            const chainId = tx.chainId;
+            const chainId: any = tx.chainId;
+            const hash = chainId == "SN_MAIN" ? starknetHashFormat(tx.hash) : tx.hash;
             const count = (await prodDb.query(`select count(1) from transaction where hash="${hash}"`))[0][0]["count(1)"];
             if (count) {
               console.log(`${chainId} ${hash} is success in mainnet DB ${count}`);
