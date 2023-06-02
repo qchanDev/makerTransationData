@@ -9,7 +9,7 @@ export class Application {
   public ctx: Context = new Context();
   async bootstrap() {
     await this.ctx.init();
-    if (process.env.NODE_ENV === "async") {
+    if (process.env.NODE_ENV === "development") {
       if(Number(process.env.INSTANCES) === 0) asycDataBase(this.ctx);
     } else {
       // process
