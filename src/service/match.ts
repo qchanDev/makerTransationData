@@ -1,5 +1,4 @@
-import { Op, Sequelize } from "sequelize";
-import { initModels } from "../models";
+import { Sequelize } from "sequelize";
 import { Context } from "../context";
 import { getFormatDate } from "../utils/oldUtils";
 import dayjs from "dayjs";
@@ -12,7 +11,7 @@ const prodDb: Sequelize = new Sequelize({
   password: process.env.PROD_MYSQL_DB_PASSWORD || "root",
   host: process.env.PROD_MYSQL_DB_HOST || "localhost",
   port: Number(process.env.PROD_MYSQL_DB_PORT || "3306"),
-  logging: false,
+  logging: true,
   timezone: "+00:00",
   define: {
     underscored: false,
@@ -25,7 +24,6 @@ prodDb.authenticate()
   .catch(error => {
     console.error("Prod Unable to connect to the database:", error);
   });
-const prodModels = initModels(prodDb);
 
 
 export async function asycDataBase(ctx: Context) {
@@ -41,21 +39,9 @@ export async function asycDataBase(ctx: Context) {
     return;
   }
   const startTime = 1678838400000;
-  const endTime = new Date().valueOf();
-  const startAt = dayjs(startTime).toDate();
-  let endAt = dayjs(endTime).toDate();
-  console.log(`${getFormatDate(startTime)} - ${getFormatDate(endTime)} Main network database synchronization begin`);
-  const transactionList = await prodModels.Transaction.findAll({
-    raw: true,
-    order: [["timestamp", "desc"]],
-    where: {
-      status: 99,
-      timestamp: {
-        [Op.gte]: startAt,
-        [Op.lte]: endAt,
-      },
-    },
-  });
+  console.log(`${getFormatDate(startTime)} - now Main network database synchronization begin`);
+  const transactionList = (await prodDb.query('select * from transaction where status=99 and timestamp >= "2023-03-15T00:00:00.000Z" and timestamp <= "2023-06-02T05:50:39.091Z" limit 10'))[0]
+
   console.log("transactionList count:", transactionList.length);
   const resultList = await ctx.models.Transaction.bulkCreate(transactionList);
   console.log("resultList count:", resultList.length);
