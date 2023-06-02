@@ -39,16 +39,19 @@ export async function asycDataBase(ctx: Context) {
     return;
   }
   const startTime = 1678838400000;
-  console.log(`${getFormatDate(startTime)} - now Main network database synchronization begin`);
-  const transactionList = (await prodDb.query('select * from transaction where status=99 and timestamp >= "2023-03-15T00:00:00.000Z" and timestamp <= "2023-06-02T05:50:39.091Z" limit 10'))[0]
+  console.log(`${getFormatDate(startTime)} - 2023-06-02T00:00:00.000Z Main network database synchronization begin`);
+  await insertData(ctx);
 
-  console.log("transactionList count:", transactionList.length);
-  const resultList = await ctx.models.Transaction.bulkCreate(transactionList);
-  console.log("resultList count:", resultList.length);
-  console.log("Main network database synchronization completed");
-  console.log("Main network database synchronization completed");
-  console.log("Main network database synchronization completed");
-  console.log("Main network database synchronization completed");
+  console.log("=============== Main network database synchronization completed ===============");
+}
+
+async function insertData(ctx, offset = 0) {
+  const transactionList = (await prodDb.query(`select * from transaction where status=99 and timestamp >= "2023-03-15T00:00:00.000Z" and timestamp <= "2023-06-02T00:00:00.000Z" limit  ${offset},100000`))[0];
+  if (transactionList.length) {
+    const resultList = await ctx.models.Transaction.bulkCreate(transactionList);
+    console.log("transaction time:", resultList[0].timestamp, resultList[transactionList.length - 1].timestamp);
+    await insertData(ctx, offset + 100000);
+  }
 }
 
 
