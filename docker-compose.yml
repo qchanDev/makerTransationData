@@ -3,7 +3,7 @@ services:
   redis:
     build: 
       context: ./redis
-      dockerfile: Dockerfile
+      dockerfile: dockerfile
       args:
         - IMAGE_NAME=redis
     command: redis-server --requirepass ${REDIS_PASSWORD}
