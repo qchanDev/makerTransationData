@@ -14,7 +14,6 @@ services:
     restart: always
   data-server:
     build: .
-      
     restart: always
     command:
       - sh
